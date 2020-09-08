@@ -1,7 +1,10 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdbool.h>
+
 #include "debug.c"
+
+typedef bool Success;
 
 typedef struct string {
 	const char* buffer;
@@ -50,9 +53,8 @@ bool string_is_equal(String *s1, String *s2) {
 }
 
 int string_index_of(String *s, String *c) {
-	if (s->lenght < c->lenght) return -1;
-
-	for (int i = 0; i < s->lenght; ++i)
+	int lenght = s->lenght - c->lenght + 1;
+	for (int i = 0; i < lenght; ++i)
 	{
 		for (int j = 0; j < c->lenght; ++j)
 		{
@@ -79,7 +81,54 @@ void string_foreach(String *s, void (*f)(char)) {
 }
 
 int string_count_of(String *s, String *c) {
-	
+	int lenght = s->lenght - c->lenght + 1;
+	int count = 0;
+	for (int i = 0; i < lenght; ++i)
+	{
+		for (int j = 0; j < c->lenght; ++j)
+		{
+			if (s->buffer[i+j] != c->buffer[j]) {
+				goto string_index_of_double_continue;
+			}
+		}
+		count++;
+
+string_index_of_double_continue:;
+	}
+	return count;
+}
+
+static int integer_pow(int i, int j) {
+	int value = 1;
+	for (int k = 0; k < j; ++k)
+	{
+		value *= i;
+	}
+	return value;
+}
+
+int string_to_int(String *s, Success *ok) {
+	const int base = 10; // may change in the future
+	const int offset_of_zero = 48;
+
+	int value = 0;
+	int value_of_digit = integer_pow(base, s->lenght-1);
+	for (int i = 0; i < s->lenght; ++i)
+	{
+		int number = s->buffer[i] - offset_of_zero;
+		if (!(number < base) || number < 0) {
+			*ok = false;
+			return value;
+		}
+		value += number * value_of_digit;
+		value_of_digit /= base;
+	}
+	*ok = true;
+	return value;
+}
+
+void string_from_int(String *out, int number) {
+
 }
 
 //mutable string
@@ -104,10 +153,9 @@ MutString* string_as_mutable(String *s) {
 
 int main(void) {
 	String str;
-	string_from_buffer(&str, "ekrem");
+	string_from_buffer(&str, "12a");
 
-	String another_str;
-	string_from_buffer(&another_str, "z");
+	Success ok;
+	printf("number: %i, success: %i\n", string_to_int(&str, &ok), ok);
 
-	printf("%i", string_index_of(&str, &another_str));
 }
