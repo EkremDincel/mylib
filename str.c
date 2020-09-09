@@ -3,6 +3,7 @@
 #include <stdbool.h>
 
 #include "debug.c"
+#include "memory.c"
 
 typedef bool Success;
 
@@ -127,6 +128,24 @@ int string_to_int(String *s, Success *ok) {
 	return value;
 }
 
+void string_add(String *s1, String *s2, String *out) {
+	int lenght = s1->lenght + s2->lenght;
+	char *buffer = mymalloc(lenght);
+	memcpy(buffer             , s1->buffer, s1->lenght);
+	memcpy(buffer + s1->lenght, s2->buffer, s2->lenght);
+	out->lenght = lenght;
+	out->buffer = buffer;
+}
+
+void string_repeat(String *s, int times, String *out) {
+	out->lenght = s->lenght * times;
+	out->buffer = mymalloc(out->lenght);
+	for  (void *i = out->buffer; (size_t)i < times; i += s->lenght)
+	{
+		memcpy(i, s->buffer, s->lenght);
+	}
+}
+
 void string_from_int(String *out, int number) {
 
 }
@@ -142,20 +161,50 @@ void string_set(MutString *s, int index, char value) {
 	s->buffer[index] = value;
 }
 
+void string_free(String *s) {
+	myfree(s->buffer);
+}
+
 String* string_as_unmutable(MutString *s) {
 	return (String*) s;
 }
 
+/*
 MutString* string_as_mutable(String *s) {
 	return (MutString*) s;
 }
+*/
 
+void test_add(void); void test_int(void); void test_repeat(void);
 
 int main(void) {
+	test_add();
+}
+
+void test_add(void) {
+	String str;
+	String str2;
+	string_from_buffer(&str, "hello ");
+	string_from_buffer(&str2, "world!");
+
+	String out;
+	string_add(&str, &str2, &out);
+	string_print(&out);
+}
+
+void test_repeat(void) {
+	String str;
+	string_from_buffer(&str, "asd ");
+
+	String out;
+	string_repeat(&str, 3, &out);
+	string_print(&out);
+}
+
+void test_int(void) {
 	String str;
 	string_from_buffer(&str, "12a");
 
 	Success ok;
 	printf("number: %i, success: %i\n", string_to_int(&str, &ok), ok);
-
 }
