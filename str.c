@@ -128,6 +128,13 @@ int string_to_int(String *s, Success *ok) {
 	return value;
 }
 
+#define string_to_array_macro(s, array) array[s->lenght + 1]; string_to_array(s, array)
+
+void string_to_array(String *s, char array[]) {
+	memcpy(array, s->buffer, s->lenght);
+	array[s->lenght] = '\0';
+}
+
 void string_add(String *s1, String *s2, String *out) {
 	int lenght = s1->lenght + s2->lenght;
 	char *buffer = mymalloc(lenght);
@@ -144,6 +151,10 @@ void string_repeat(String *s, int times, String *out) {
 	{
 		memcpy(i, s->buffer, s->lenght);
 	}
+}
+
+void string_reverse(String *s, String *out) {
+
 }
 
 void string_from_int(String *out, int number) {

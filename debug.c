@@ -15,5 +15,8 @@ void _assert(int x, const char* msg, const char* file, int line) {
 	#endif
 }
 
-#define assert(x, msg) _assert(x, msg, __FILE__, __LINE__)
-#define assert_not(x, msg) _assert(!(x), msg, __FILE__, __LINE__)
+#define assert_msg(x, msg) _assert(x, msg, __FILE__, __LINE__)
+#define assert(x) _assert(x, "no information.", __FILE__, __LINE__)
+
+#define assert_not_msg(x, msg) _assert(x, msg, __FILE__, __LINE__)
+#define assert_not(x) _assert(!(x), "no information.", __FILE__, __LINE__)
