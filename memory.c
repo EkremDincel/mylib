@@ -1,5 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
+#include "memory.h"
 
 void * mymalloc(size_t size) {
 	void *p = malloc(size);
@@ -18,7 +17,8 @@ void * myrealloc(void *ptr, size_t size) {
 	return new_ptr;
 }
 
-#define myfree(ptr) do 	\
+#define myfree(ptr) 	\
+	do 					\
 	{					\
 		free(ptr);   	\
 		ptr = NULL;		\
