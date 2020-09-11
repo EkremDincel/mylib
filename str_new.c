@@ -84,6 +84,10 @@ void string_copy(String *s, String *out) {
 	memcpy(out->buffer, s->buffer, s->length);
 }
 
+// Macro for iterating over a string. See [test_iter] below for an example usage.
+#define string_iter(s, c) \
+	for (int __counter = 0, (c) = (s)->buffer[__counter]; __counter < (s)->length; ++__counter, (c) = (s)->buffer[__counter])
+
 // Print a string, useful for debugging purposes.
 void string_print(String *s) {
 	for (int i = 0; i < s->length; ++i)
@@ -263,6 +267,7 @@ void string_reverse(String *s, String *out) {
 #define MY_TEST
 #ifdef MY_TEST
 
+void test_iter(void);
 void test_add(void); 
 void test_to_int(void); 
 void test_repeat(void);
@@ -276,9 +281,23 @@ int main(void) {
 	test_to_buffer();
 	test_add();
 	test_repeat();
+	test_iter();
 	test_to_int();
 	test_from_int();
 	test_copy();
+}
+
+void test_iter(void) {
+	String str;
+	char *buffer = "hello world.";
+	string_from_buffer(&str, buffer);
+
+	char c;
+	int i = 0;
+	string_iter(&str, c) {
+		assert(buffer[i] == c);
+		i++;
+	}
 }
 
 void test_equal(void) {
